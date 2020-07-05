@@ -2,6 +2,8 @@
 using System.IO;
 using Data;
 using Domain;
+using Hangfire;
+using Services.BackgroundJobs;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
@@ -82,6 +84,8 @@ namespace Services
             
             MediaService.Save(media);
             UnitOfWork.Commit();
+
+            BackgroundJob.Enqueue<ImageProcessingJob>(j => j.Execute());
             
             return new ImagesMetadata
             {
